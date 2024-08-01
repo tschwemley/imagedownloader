@@ -3,11 +3,15 @@ package imagedownloader
 import (
 	"fmt"
 	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"sync"
+
+	_ "golang.org/x/image/webp"
 )
 
 // ImageDownloader is a service for downloading images
