@@ -6,6 +6,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -60,10 +61,16 @@ func (id *ImageDownloader) DownloadImages(images []ImageDetails) []ImageDownload
 			defer func() { <-semaphore }()
 
 			filePath, err := id.downloadSingleImage(details)
+			if err != nil {
+				log.Println("error while setting filepath for:", details.URL)
+				log.Println("\terror is:", err.Error())
+				return
+			}
+
 			w, h, err := getImageDimensions(filePath)
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(69)
+				log.Println("error getting image dimensions for:", details.URL)
+				log.Println("\terror is:", err.Error())
 			}
 			results[i] = ImageDownloadResult{
 				URL:      details.URL,
@@ -98,7 +105,7 @@ func (id *ImageDownloader) downloadSingleImage(details ImageDetails) (string, er
 
 	err = os.MkdirAll(dirPath, 0764)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("")
 		os.Exit(99)
 	}
 	out, err := os.Create(filePath)
